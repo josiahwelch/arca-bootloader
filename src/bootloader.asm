@@ -5,15 +5,14 @@
 bits 16 ; Since it boots in real mode
 org 0x7c00 ; The BIOS loads the code at this address
 
-mov si, 0 ; Uses si for counter
-
-print:
-	; Initialization
+start:
+	mov si, 0 ; Uses si for counter
 	mov ax, 0x07C0 ; Sets up segment
 	mov ds, ax
 	mov es, ax
+	jmp print
 
-	; Sends hello string to screen
+print: ; Sends hello string to screen
 	mov ah, 0x0e
 	mov al, [hello + si] ; Increments a pointer to hello string
 	int 0x10 ; Interrupt 0x10
