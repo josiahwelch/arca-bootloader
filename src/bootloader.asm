@@ -33,6 +33,9 @@ kernel_load:
 	mov cl, 2             ; Sector (1=boot, 2=kernel)
 	int 0x13              ; BIOS disk interrupt
 
+	; Jump to kernel
+	jmp 0x7E00
+
 jmp $ ; Creates an infinite loop, which is not ideal...
 
 hello:
