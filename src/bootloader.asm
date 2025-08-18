@@ -7,10 +7,11 @@ org 0x7c00 ; The BIOS loads the code at this address
 
 start:
 	mov si, 0 ; Uses si for counter
-	mov ax, 0x07C0 ; Sets up segment
-	mov ds, ax
-	mov es, ax
-	jmp print
+	;mov ax, 0x07C0 ; Sets up segment
+	;mov ds, ax
+	;mov es, ax
+	call print
+	call kernel_load
 
 print: ; Sends hello string to screen
 	mov ah, 0x0e
@@ -19,6 +20,18 @@ print: ; Sends hello string to screen
 	inc si ; Increments counter
 	cmp byte [hello + si], 0 ; Checks if the counter is at the end of hello string
 	jne print ; Loops
+
+kernel_load:
+	; Load kernel from disk (sector 2)
+	mov ax, 0x7E00        ; Kernel load address
+	mov es, ax
+	xor bx, bx            ; Buffer offset
+	mov ah, 0x02          ; BIOS read sector
+	mov al, 1             ; Number of sectors
+	mov ch, 0             ; Cylinder
+	mov dh, 0             ; Head
+	mov cl, 2             ; Sector (1=boot, 2=kernel)
+	int 0x13              ; BIOS disk interrupt
 
 jmp $ ; Creates an infinite loop, which is not ideal...
 
