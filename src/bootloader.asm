@@ -28,4 +28,3 @@ hello:
 
 times  510 - ($ - $$) db 0 ; Fills the rest of the 512 byte boot sector with zeroes
 dw 0xAA55 ; Magic number
-
