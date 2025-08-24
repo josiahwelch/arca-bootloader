@@ -2,8 +2,8 @@
 ; 8/17/25
 ; Arca Bootloader
 
-bits 16 ; Since it boots in real mode
-org 0x7c00 ; The BIOS loads the code at this address
+[bits 16] ; Since it boots in real mode
+[org 0x7c00] ; The BIOS loads the code at this address
 
 start:
 	mov si, 0 ; Uses si for counter
