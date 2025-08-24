@@ -15,10 +15,10 @@ start:
 
 print: ; Sends hello string to screen
 	mov ah, 0x0e
-	mov al, [hello + si] ; Increments a pointer to hello string
+	mov al, [boot_msg + si] ; Increments a pointer to boot msg
 	int 0x10 ; Interrupt 0x10
 	inc si ; Increments counter
-	cmp byte [hello + si], 0 ; Checks if the counter is at the end of hello string
+	cmp byte [boot_msg + si], 0 ; Checks if the counter is at the end of boot msg
 	jne print ; Loops
 
 kernel_load:
@@ -38,8 +38,8 @@ kernel_load:
 
 jmp $ ; Creates an infinite loop, which is not ideal...
 
-hello:
-	db "Hello, World!", 0 ; Hello string initialization
+boot_msg:
+	db "Arca booting...", 0 ; Boot message initialization
 
 times  510 - ($ - $$) db 0 ; Fills the rest of the 512 byte boot sector with zeroes
 dw 0xAA55 ; Magic number
