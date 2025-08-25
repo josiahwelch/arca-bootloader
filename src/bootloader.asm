@@ -16,8 +16,29 @@ print:
     mov ah, 0x0e    ; Set teletype mode
     int 0x10        ; Call BIOS interrupt to print character
     jmp print       ; Loop back to print next character
+
 done:
     ret
+
+protected_mode:
+	cli ; Disables interrupts
+
+	; Segment registers
+	xor ax, ax
+	mov ds, ax
+	mov es, ax
+	mov ss, ax
+	mov sp, 0x7C00
+
+	lgdt [gdt_descriptor] ; Loads GDT
+
+	; Switches to protected mode (32 bit)
+	mov eax, cr0
+	or eax, 1
+	mov cr0, eax
+
+	jmp 0x08:protected_mode ; Far jump to 32-bit code
+
 
 version_msg:
     db "Arca bootloader v0.1", 0x0A, 0 ; Null-terminated message string
