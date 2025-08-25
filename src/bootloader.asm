@@ -7,6 +7,7 @@
 	int 0x21
     mov si, boot_msg     ; Set si to point to the boot message
     call print      ; Call print function
+	call enter_protected_mode
     jmp $           ; Infinite loop
 
 print:
@@ -20,7 +21,7 @@ print:
 done:
     ret
 
-protected_mode:
+enter_protected_mode:
 	cli ; Disables interrupts
 
 	; Segment registers
@@ -39,6 +40,43 @@ protected_mode:
 
 	jmp 0x08:protected_mode ; Far jump to 32-bit code
 
+; GDT setup
+gdt_start:
+    ; Null descriptor
+    dd 0
+    dd 0
+    ; Code segment descriptor (base=0, limit=4GB, executable, 32-bit)
+    dw 0xFFFF        ; Limit low
+    dw 0x0000        ; Base low
+    db 0x00          ; Base mid
+    db 0x9A          ; Access (present, code, executable)
+    db 0xCF          ; Flags (4KB granularity, 32-bit) + Limit high
+    db 0x00          ; Base high
+    ; Data segment descriptor (base=0, limit=4GB, writable)
+    dw 0xFFFF
+    dw 0x0000
+    db 0x00
+    db 0x92          ; Access (present, data, writable)
+    db 0xCF
+    db 0x00
+
+gdt_descriptor:
+    dw gdt_end - gdt_start - 1
+    dd gdt_start
+
+[bits 32]
+protected_mode:
+    ; Set up segment registers for 32-bit
+    mov ax, 0x10     ; Data segment selector
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+    mov ss, ax
+    mov esp, 0x90000 ; Stack pointer
+
+    ; Your 32-bit code here (infinite loop for now)
+    jmp $
 
 version_msg:
     db "Arca bootloader v0.1", 0x0A, 0 ; Null-terminated message string
