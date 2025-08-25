@@ -76,6 +76,8 @@ protected_mode:
     mov esp, 0x90000 ; Stack pointer
 
     ; Your 32-bit code here (infinite loop for now)
+	mov si, protected_mode_msg
+	call print
     jmp $
 
 version_msg:
@@ -83,6 +85,9 @@ version_msg:
 
 boot_msg:
     db "Arca OS booting...", 0 ; Null-terminated message string
+
+protected_mode_msg:
+	db "Entered protected mode! Booting kernel...", 0 ; Null-terminated message string
 
 times 510-($-$$) db 0 ; Fill the rest of the sector with 0s
 dw 0xaa55 ; Boot signature
